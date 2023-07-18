@@ -5,4 +5,6 @@
 pip install -r requirements.txt`
 ```
 ## Run app
-```python main.py```
+```
+python main.py
+```
