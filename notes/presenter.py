@@ -21,11 +21,16 @@ class MenuPresenter:
         self.view.print_message('6. Сохранить заметки')
         self.view.print_message('7. Загрузить заметки')
         self.view.print_message('0. Выход')
-        self.view.print_message('>> ')
+        self.view.print_message('Выберете действие:')
 
     def get_id(self):
-        self.view.print_message('Введите id\n>> ')
-        return int(self.view.get_input())
+        try:
+            self.view.print_message('Введите id')
+            result = int(self.view.get_input())
+            return result
+        except:
+            self.view.print_message('Ошибка вывода!')
+            self.get_id()
 
     def build_note(self) -> Note:
         self.view.print_message('Введите название')
@@ -38,17 +43,17 @@ class MenuPresenter:
         command_code = -1
         while command_code != 0:
             self.print_menu()
-            command_code = int(self.view.get_input())
+            command_code = self.view.get_input()
 
             match command_code:
-                case 1:
+                case '1':
                     result = self.model.get(None)
                     if result:
                         self.view.print_message(*result)
                     else:
                         self.view.print_message('Заметки не найдены')
 
-                case 2:
+                case '2':
                     id_note = self.get_id()
                     result = self.model.get(id_note)
                     if result:
@@ -56,11 +61,11 @@ class MenuPresenter:
                     else:
                         self.view.print_message(f'Заметка №{id_note} не найдена')
 
-                case 3:
+                case '3':
                     note = self.build_note()
                     self.model.add(note)
 
-                case 4:
+                case '4':
                     id_note = self.get_id()
                     note = self.build_note()
                     if self.model.update(id_note, note):
@@ -68,19 +73,22 @@ class MenuPresenter:
                     else:
                         self.view.print_message(f'Заметка №{id_note} не найдена')
 
-                case 5:
+                case '5':
                     id_note = self.get_id()
                     if self.model.delete(id_note):
                         self.view.print_message('Заметка успешно удалена')
                     else:
                         self.view.print_message(f'Заметка №{id_note} не найдена')
 
-                case 6:
+                case '6':
                     self.view.print_message('Введите имя файла')
                     filename = self.view.get_input()
                     save_json(self.model.model_dump(), filename)
 
-                case 7:
+                case '7':
                     self.view.print_message('Введите имя файла')
                     filename = self.view.get_input()
                     self.model = NoteList(**load_json(filename))
+
+                case _:
+                    self.view.print_message('Команда не найдена')
